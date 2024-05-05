@@ -1,0 +1,26 @@
+test:
+  name: supplychain-contract-bechmark
+  description: "Supplychain contract benchmark"
+  workers:
+    type: local
+    number: 5
+  rounds:
+    - label: createProduct
+      description: "Create product"
+      txnNum: 1000
+      rateControl:
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
+      workload:
+        module: workload/createProduct
+        arguments: 
+          contractId: supplychain
+
+monitors:
+  resource:
+    - module: docker
+      options:
+        interval: 4
+        containers:
+          ["/peer0.org1.example.com",
+          "/peer0.org2.example.com",
+          "/orderer.example.com"]
