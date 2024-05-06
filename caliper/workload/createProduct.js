@@ -1,87 +1,78 @@
 'use strict';
 
-/**
- * Caliper benchmark test script for the 'createProduct' transaction.
- */
-
 const { WorkloadModuleBase } = require('@hyperledger/caliper-core');
+const fs = require('fs');
 const { createHash } = require('crypto');
 
 class CreateProduct extends WorkloadModuleBase {
     constructor() {
         super();
         this.txIndex = -1;
-        this.productId = `product_${Math.floor(Math.random() * 100000)}`;
-        this.productJson = {
-            id: this.productId,
-            name: "Sample Product",
-            barcode: "ABCDE",
-            placeOfOrigin: "Sample Origin",
-            productionDate: "2024-05-05",
-            expirationDate: "2024-12-31",
-            unitQuantity: 100,
-            unitQuantityType: "pieces",
-            unitPrice: 10.5,
-            category: "Sample Category",
+        this.productIds = [];
+        this.csvFilePath = './productIds.csv';
+        // Check if the CSV file exists, if not, create a new one with headers
+        if (!fs.existsSync(this.csvFilePath)) {
+            fs.writeFileSync(this.csvFilePath, 'productId\n');
+        }
+    }
+
+    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
+    }
+
+    async submitTransaction() {
+        this.txIndex++;
+        const productId = createHash('sha256').update(`${Date.now()}_${this.txIndex}`).digest('hex');
+        this.productIds.push(productId); // Save the product ID
+        // Write the product ID to the CSV file
+        fs.appendFileSync(this.csvFilePath, `${productId}\n`);
+        
+        // Generate component product IDs (for now, it's an empty array)
+        const componentProductIds = [];
+
+        const productJson = {
+            id: productId,
+            name: "Apples",
+            barcode: "1234567890",
+            batchQuantity: 1000,
+            category: "Fruits",
+            componentProductIds: componentProductIds,
+            expirationDate: "2024-04-24T18:25:43.511Z",
             locationData: {
                 current: {
-                    location: "Sample Location",
-                    arrivalDate: "2024-05-05"
-                }
-            }
+                    arrivalDate: "2024-04-01T00:00:00.000Z",
+                    location: "Local Market, Mumbai, Maharashtra, India"
+                },
+                previous: []
+            },
+            misc: {},
+            placeOfOrigin: "Markham, ON, Canada",
+            productionDate: "2024-03-24T18:25:43.511Z",
+            unitPrice: "₹300.00",
+            unitQuantity: 300,
+            unitQuantityType: "mg",
+            variety: "22"
         };
+
+        const request = {
+            contractId: this.roundArguments.contractId,
+            contractFunction: 'createProduct',
+            invokerIdentity: 'User1',
+            contractArguments: [JSON.stringify(productJson)],
+            readOnly: false
+        };
+
+        await this.sutAdapter.sendRequests(request);
     }
 
-    /**
-     * Initializes the workload module.
-     */
-    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
-      await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);  
-      // No initialization required for this workload
-    }
+    async cleanupWorkloadModule() {}
 
-    /**
-     * Generate a unique product ID.
-     * @returns {string} Product ID
-     */
-    generateProductId() {
-        return `product_${createHash('md5').update(new Date().toISOString()).digest('hex').substring(0, 10)}`;
-    }
-
-    /**
-     * Generate a random number.
-     * @param {number} min - Minimum value.
-     * @param {number} max - Maximum value.
-     * @returns {number} Random number between min and max.
-     */
-    getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-    /**
-     * Assemble and return TX Object for createProduct transaction.
-     * @returns {Object} TX Object
-     */
-    async submitTransaction() {
-      this.txIndex++;
-      const assetID = `${this.roundIndex}_${this.workerIndex}_${this.txIndex}_${Date.now()}`;
-      let size = (((this.txIndex % 10) + 1) * 10).toString(); // [10, 100]
-      let owner = this.owners[this.txIndex % this.owners.length];
-      return this.sutAdapter.invokeSmartContract('ProductSupplyChainContract', 'createProduct', [JSON.stringify(this.productJson)], 30);
-    }
-
-    /**
-     * Cleanup the workload module.
-     */
-    async cleanupWorkloadModule() {
-        // No cleanup required for this workload
+    // Get the array of product IDs
+    getProductIds() {
+        return this.productIds;
     }
 }
 
-/**
- * Create a new instance of the workload module.
- * @returns {WorkloadModuleBase} The workload module instance.
- */
 function createWorkloadModule() {
     return new CreateProduct();
 }

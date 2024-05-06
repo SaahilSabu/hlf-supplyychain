@@ -7,19 +7,19 @@ caliper:
     mutualTls: true
 
 channels:
-  - channelName: channel1
+  - channelName: mychannel
     contracts:
-      - id: myContract
+      - id: supplychain
 
 organizations:
-  - mspid: org1
+  - mspid: Org1MSP
     identities: 
       certificates:
         - name: "User1"
           clientPrivateKey: 
-            path: "../network/fabric-network/organizatons/peerOrganizations/org1.example.com/users/User1@org1.example.com/keystore/network/fabric-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/keystore/947704710cc190133276e2fa4ba15dd5f8b6a4adc1d5c428734b1a38b9cfa113_sk"
+            path: "../network/fabric-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/keystore/babafdfa96260018ddea0bc2bafad70a8b5373e164365d3260f9315404461d25_sk"
           clientSignedCert:
-            path: "../network/fabric-network/organizatons/peerOrganizations/org1.example.com/users/User1@org1.example.com/keystore/network/fabric-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/signcerts/cert.pem"
+            path: "../network/fabric-network/organizations/peerOrganizations/org1.example.com/users/User1@org1.example.com/msp/signcerts/cert.pem"
     connectionProfile:
       path: "../network/fabric-network/organizations/peerOrganizations/org1.example.com/connection-org1.yaml"
       discover: true

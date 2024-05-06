@@ -3,15 +3,51 @@ test:
   description: "Supplychain contract benchmark"
   workers:
     type: local
-    number: 5
+    number: 1
   rounds:
     - label: createProduct
       description: "Create product"
-      txnNum: 1000
+      txNumber: 1
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
+        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
       workload:
-        module: workload/createProduct
+        module: workload/createProduct.js
+        arguments: 
+          contractId: supplychain
+    - label: shipProductTo
+      description: "Ship product to a new location"
+      txNumber: 1
+      rateControl:
+        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+      workload:
+        module: workload/shipProductTo.js
+        arguments: 
+          contractId: supplychain
+    - label: getProduct
+      description: "Get product details"
+      txNumber: 1
+      rateControl:
+        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+      workload:
+        module: workload/getProduct.js
+        arguments: 
+          contractId: supplychain
+    - label: getAllProducts
+      description: "Get all products"
+      txNumber: 1
+      rateControl:
+        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+      workload:
+        module: workload/getAllProducts.js
+        arguments: 
+          contractId: supplychain
+    - label: getProductWithHistory
+      description: "Get product with history"
+      txNumber: 1
+      rateControl:
+        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+      workload:
+        module: workload/getProductWithHistory.js
         arguments: 
           contractId: supplychain
 

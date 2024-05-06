@@ -11,8 +11,9 @@
   "description": "",
   "dependencies": {
     "@grpc/grpc-js": "^1.10.3",
+    "@hyperledger/caliper-cli": "^0.4.2",
     "@hyperledger/fabric-gateway": "^1.5.0",
     "fabric-ca-client": "^2.2.3",
-    "fabric-network": "^2.2.20"
+    "fabric-network": "^2.2.3"
   }
 }
