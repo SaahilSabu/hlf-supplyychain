@@ -7,27 +7,27 @@ test:
   rounds:
     - label: createProduct
       description: "Create product"
-      txNumber: 1
+      txNumber: 1000
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
       workload:
         module: workload/createProduct.js
         arguments: 
           contractId: supplychain
     - label: shipProductTo
       description: "Ship product to a new location"
-      txNumber: 1
+      txNumber: 1000
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
       workload:
         module: workload/shipProductTo.js
         arguments: 
           contractId: supplychain
     - label: getProduct
       description: "Get product details"
-      txNumber: 1
+      txNumber: 1000
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
       workload:
         module: workload/getProduct.js
         arguments: 
@@ -36,16 +36,16 @@ test:
       description: "Get all products"
       txNumber: 1
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
       workload:
         module: workload/getAllProducts.js
         arguments: 
           contractId: supplychain
     - label: getProductWithHistory
       description: "Get product with history"
-      txNumber: 1
+      txNumber: 1000
       rateControl:
-        { type: "linear-rate", opts: { startingTps: 5, finishingTps: 20 } }
+        { type: "linear-rate", opts: { startingTps: 50, finishingTps: 200 } }
       workload:
         module: workload/getProductWithHistory.js
         arguments: 
@@ -60,3 +60,9 @@ monitors:
           ["/peer0.org1.example.com",
           "/peer0.org2.example.com",
           "/orderer.example.com"]
+    - module: process
+      options:
+        interval: 4
+        cpu: true
+        memory: true
+        network: true
